@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     textInput: {
+        fontFamily: Fonts.regular,
         borderWidth: 1,
         borderRadius: 40,
         borderColor: "#E2E8F0",

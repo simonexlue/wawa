@@ -72,10 +72,13 @@ export default function StepTwoGoal({
                 {quickPicks.map((pick) => (
                     <TouchableOpacity 
                         key={pick.label}
-                        style={styles.quickPickButton}
+                        style={[
+                            styles.quickPickButton,
+                            dailyGoal === pick.label && styles.quickPickButtonActive
+                        ]}
                         onPress={() => setDailyGoal(pick.label)}
                         >
-                        <Text style={styles.quickPickButtonText}>{pick.label} mL</Text>
+                        <Text style={[styles.quickPickButtonText, dailyGoal === pick.label && styles.quickPickButtonTextActive]}>{pick.label} mL</Text>
                     </TouchableOpacity>
                 ))}
 
@@ -211,5 +214,12 @@ const styles = StyleSheet.create({
     buttonText: {
         fontFamily: Fonts.medium,
         color: "white"
+    },
+    quickPickButtonActive: {
+        backgroundColor: "rgb(62,144,212)",
+        borderColor: "rgb(62,144,212)",
+    },
+    quickPickButtonTextActive: {
+        color: "white",
     },
 })

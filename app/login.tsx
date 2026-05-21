@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
     },
     textInput: {
+        fontFamily: Fonts.regular,
         borderWidth: 1,
         borderRadius: 40,
         borderColor: "#E2E8F0",
