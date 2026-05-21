@@ -33,7 +33,10 @@ export default function StepOneProfileInfo({
             />
 
             <TouchableOpacity 
-                style={styles.button}
+                style={[
+                    styles.button,
+                    !displayName.trim() && styles.buttonDisabled,
+                ]}
                 disabled={!displayName.trim()}
                 onPress={onNext}
                 >
@@ -101,4 +104,10 @@ const styles = StyleSheet.create({
         fontFamily: Fonts.medium,
         color: "white"
     },
+    buttonDisabled: {
+        backgroundColor: "rgb(62,144,212)",
+        shadowOpacity: 0,
+        elevation: 0,
+        opacity: 0.5,
+    }
 })

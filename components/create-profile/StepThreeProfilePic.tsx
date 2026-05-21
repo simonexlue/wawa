@@ -3,10 +3,13 @@ import {
     TouchableOpacity, 
     Text,
     View,
+    Image,
+    Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Fonts } from "../../constants/fonts";
 import { Ionicons } from "@expo/vector-icons";
+import * as ImagePicker from "expo-image-picker"
 
 type StepThreeProfilePicProps = {
     displayName: string
@@ -27,6 +30,26 @@ export default function StepThreeProfilePic({
     const subtitle = "Help your friends recognize you. You can skip and add one later."
     const initial = displayName?.trim().charAt(0).toUpperCase() || "?";
 
+    async function pickImage() {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+        if(!permissionResult.granted) {
+            Alert.alert("Permission required", "Permission to access the media library is required.")
+            return;
+        }
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ['images'],
+            allowsEditing: true,
+            aspect: [4,3],
+            quality: 0.7,
+        })
+
+        if(!result.canceled) {
+            setAvatar(result.assets[0].uri);
+        }
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <TouchableOpacity onPress={onBack}>
@@ -36,12 +59,18 @@ export default function StepThreeProfilePic({
 
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>{subtitle}</Text>
+            
+            {avatar ? (
+                <View style={styles.avatarWrapper}>
+                    <Image source={{uri: avatar}} style={styles.avatarImage}/>
+                </View>      
+            ) : (
+                <View style={styles.avatarPlaceholder}>
+                    <Text style={styles.avatarInitial}>{initial}</Text>
+                </View>
+            )}
 
-            <View style={styles.avatarPlaceholder}>
-                <Text style={styles.avatarInitial}>{initial}</Text>
-            </View>
-
-            <TouchableOpacity style={styles.choosePhotoButton}>
+            <TouchableOpacity onPress={pickImage} style={styles.choosePhotoButton}>
                 <Text style={styles.choosePhotoButtonText}>Choose Photo</Text>
             </TouchableOpacity>
 
@@ -84,6 +113,23 @@ const styles = StyleSheet.create({
         opacity: 0.6,
         marginBottom: 30,
     },
+    avatarWrapper: {
+        alignSelf: "center",
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 10,
+            height: 20,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 12,
+        elevation: 6,
+        marginTop: 20,
+    },
+    avatarImage: {
+        width: 140,
+        height: 140,
+        borderRadius: 100,
+    },
     avatarPlaceholder: {
         width: 140,
         height: 140,
@@ -96,7 +142,7 @@ const styles = StyleSheet.create({
             width: 10,
             height: 20,
         },
-        shadowOpacity: 0.13,
+        shadowOpacity: 0.3,
         shadowRadius: 12,
         elevation: 6,
         alignSelf: "center",
