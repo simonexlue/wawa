@@ -9,6 +9,7 @@ import StepOneProfileInfo from "../components/create-profile/StepOneProfileInfo"
 import StepTwoGoal from "../components/create-profile/StepTwoGoal";
 import StepThreeProfilePic from "../components/create-profile/StepThreeProfilePic";
 import StepFourContainer from "../components/create-profile/StepFourContainer";
+import StepProgress from "../components/create-profile/StepProgress";
 
 export default function CreateProfile() {
     const [step, setStep] = useState(1)
@@ -26,51 +27,57 @@ export default function CreateProfile() {
         setStep((prev) => prev - 1)
     }
 
-    if(step === 1) {
-        return (
-            <StepOneProfileInfo 
-                displayName={displayName}
-                setDisplayName={setDisplayName}
-                onNext={onNext}
-            />
-        )
-    } else if (step === 2) {
-        return (
-            <StepTwoGoal 
-                dailyGoal={dailyGoal}
-                setDailyGoal={setDailyGoal}
-                onNext={onNext}
-                onBack={onBack}
-            />
-        )  
-    } else if (step === 3) {
-        return (
-            <StepThreeProfilePic
-                displayName={displayName}
-                avatar={avatar}
-                setAvatar={setAvatar}
-                onNext={onNext}
-                onBack={onBack}
-            />
-        )
-    } else if (step === 4) {
-        return (
-            <StepFourContainer
-                containerName={containerName}
-                setContainerName={setContainerName}
-                containerAmount={containerAmount}
-                setContainerAmount={setContainerAmount}
-                onNext={onNext}
-                onBack={onBack}
-            />
-        )
+    function renderStep() {
+        if(step === 1) {
+            return (
+                <StepOneProfileInfo 
+                    displayName={displayName}
+                    setDisplayName={setDisplayName}
+                    onNext={onNext}
+                />
+            )
+        } else if (step === 2) {
+            return (
+                <StepTwoGoal 
+                    dailyGoal={dailyGoal}
+                    setDailyGoal={setDailyGoal}
+                    onNext={onNext}
+                    onBack={onBack}
+                />
+            )  
+        } else if (step === 3) {
+            return (
+                <StepThreeProfilePic
+                    displayName={displayName}
+                    avatar={avatar}
+                    setAvatar={setAvatar}
+                    onNext={onNext}
+                    onBack={onBack}
+                />
+            )
+        } else if (step === 4) {
+            return (
+                <StepFourContainer
+                    containerName={containerName}
+                    setContainerName={setContainerName}
+                    containerAmount={containerAmount}
+                    setContainerAmount={setContainerAmount}
+                    onNext={onNext}
+                    onBack={onBack}
+                />
+            )
+        }
     }
 
     return (
         <SafeAreaView style={styles.container}>
-            <Text>
-                Create Profile
-            </Text>
+            <StepProgress 
+                currentStep={step}
+                totalSteps={4}
+                onBack={onBack}
+                showBack={step > 1}
+            />
+            {renderStep()}
         </SafeAreaView>
     )
 }

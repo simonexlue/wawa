@@ -36,12 +36,7 @@ export default function StepFourContainer({
     ]
 
     return (
-        <SafeAreaView style={styles.container}>
-            <TouchableOpacity onPress={onBack}>
-                <Ionicons name="arrow-back" size={28} color="rgb(59,99,124)" />
-            </TouchableOpacity>
-            
-
+        <View style={styles.container}>
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>{subtitle}</Text>
 
@@ -88,16 +83,13 @@ export default function StepFourContainer({
                 >
                 <Text style={styles.buttonText}>Finish Setup</Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#a6e6fd",
-        paddingHorizontal: 25,
-        paddingVertical: 10,
     },
     title: {
         fontFamily: Fonts.bold,

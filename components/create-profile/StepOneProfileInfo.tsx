@@ -2,7 +2,8 @@ import {
     StyleSheet,
     Text,
     TextInput,
-    TouchableOpacity, 
+    TouchableOpacity,
+    View, 
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Fonts } from "../../constants/fonts";
@@ -20,7 +21,7 @@ export default function StepOneProfileInfo({
 }: StepOneProfileInfoProps) {
 
     return (
-        <SafeAreaView style={styles.container}>
+        <View style={styles.container}>
 
             <Text style={styles.title}>What's your name?</Text>
             <Text style={styles.subtitle}>This is how friends will find you on wawa.</Text>
@@ -42,16 +43,13 @@ export default function StepOneProfileInfo({
                 >
                 <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>
-        </SafeAreaView>
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#a6e6fd",
-        paddingHorizontal: 25,
-        paddingVertical: 10,
     },
     title: {
         fontFamily: Fonts.bold,
