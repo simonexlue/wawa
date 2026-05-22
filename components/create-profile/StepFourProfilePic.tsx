@@ -6,26 +6,22 @@ import {
     Image,
     Alert,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Fonts } from "../../constants/fonts";
-import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker"
 
-type StepThreeProfilePicProps = {
+type StepFourProfilePicProps = {
     displayName: string
     avatar: string | null
     setAvatar: React.Dispatch<React.SetStateAction<string | null>>
     onNext: () => void
-    onBack: () => void
 }
 
-export default function StepThreeProfilePic({
+export default function StepFourProfilePic({
     displayName,
     avatar,
     setAvatar,
     onNext,
-    onBack,
-}: StepThreeProfilePicProps) {
+}: StepFourProfilePicProps) {
     const title = "Add a profile picture"
     const subtitle = "Help your friends recognize you. You can skip and add one later."
     const initial = displayName?.trim().charAt(0).toUpperCase() || "?";

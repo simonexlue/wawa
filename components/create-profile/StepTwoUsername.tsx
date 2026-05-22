@@ -1,47 +1,44 @@
-import { 
-    StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View, 
-} from "react-native";
+import { View, StyleSheet, Text, TextInput, TouchableOpacity } from "react-native";
 import { Fonts } from "../../constants/fonts";
 
-type StepOneProfileInfoProps = {
-    displayName: string;
-    setDisplayName: React.Dispatch<React.SetStateAction<string>>;
-    onNext: () => void
+type StepTwoUsernameProps = {
+    username: string;
+    setUsername: React.Dispatch<React.SetStateAction<string>>;
+    onNext: () => void;
 }
 
-export default function StepOneProfileInfo({
-    displayName,
-    setDisplayName,
-    onNext,
-}: StepOneProfileInfoProps) {
+export default function StepTwoUsername({
+    username,
+    setUsername,
+    onNext
+}: StepTwoUsernameProps) {
+    const title = "Decide your username"
+    const subtitle = "This is another way that friends can find you on wawa."
 
     return (
         <View style={styles.container}>
 
-            <Text style={styles.title}>What's your name?</Text>
-            <Text style={styles.subtitle}>This is how friends will find you on wawa.</Text>
+            <Text style={styles.title}>{title}</Text>
+            <Text style={styles.subtitle}>{subtitle}</Text>
 
             <TextInput 
-                placeholder="Your name"
-                value={displayName}
-                onChangeText={setDisplayName}
+                placeholder="ex. jdoe123"
+                value={username}
+                onChangeText={setUsername}
                 style={styles.textInput}
             />
 
             <TouchableOpacity 
                 style={[
                     styles.button,
-                    !displayName.trim() && styles.buttonDisabled,
+                    !username.trim() && styles.buttonDisabled,
                 ]}
-                disabled={!displayName.trim()}
+                disabled={!username.trim()}
                 onPress={onNext}
                 >
                 <Text style={styles.buttonText}>Continue</Text>
             </TouchableOpacity>
+            
         </View>
     )
 }

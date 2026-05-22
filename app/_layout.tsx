@@ -24,6 +24,9 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="index" />
             <Stack.Screen name="signup" />
+            <Stack.Screen name="login" />
+            <Stack.Screen name="create-profile" />
+            <Stack.Screen name="(tabs)" />
         </Stack>
     );
 }

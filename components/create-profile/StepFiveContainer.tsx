@@ -5,27 +5,25 @@ import {
     View,
     TextInput,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Fonts } from "../../constants/fonts";
-import { Ionicons } from "@expo/vector-icons";
 
-type StepFourContainerProps = {
+type StepFiveContainerProps = {
     containerName: string
     setContainerName: React.Dispatch<React.SetStateAction<string>>
     containerAmount: string
     setContainerAmount: React.Dispatch<React.SetStateAction<string>>
     onNext: () => void
-    onBack: () => void
+    isSubmitting: boolean
 }
 
-export default function StepFourContainer({
+export default function StepFiveContainer({
     containerName,
     setContainerName,
     containerAmount,
     setContainerAmount,
     onNext,
-    onBack,
-}: StepFourContainerProps) {
+    isSubmitting,
+}: StepFiveContainerProps) {
     const title = "Add your go-to bottle"
     const subtitle = "Save the container you drink from most. You can log water with one tap later."
 
@@ -81,7 +79,9 @@ export default function StepFourContainer({
                 disabled={!containerAmount.trim() || !containerName.trim()}
                 onPress={onNext}
                 >
-                <Text style={styles.buttonText}>Finish Setup</Text>
+                <Text style={styles.buttonText}>
+                    {isSubmitting ? "Finishing setup..." : "Finish setup"}
+                </Text>
             </TouchableOpacity>
         </View>
     )

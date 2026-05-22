@@ -5,23 +5,19 @@ import {
     TouchableOpacity, 
     View
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { Fonts } from "../../constants/fonts";
-import { Ionicons } from "@expo/vector-icons";
 
-type StepTwoGoalProps = {
+type StepThreeGoalProps = {
     dailyGoal: string;
     setDailyGoal: React.Dispatch<React.SetStateAction<string>>;
     onNext: () => void;
-    onBack: () => void;
 }
 
-export default function StepTwoGoal({
+export default function StepThreeGoal({
     dailyGoal,
     setDailyGoal,
     onNext,
-    onBack,
-}: StepTwoGoalProps) {
+}: StepThreeGoalProps) {
     const quickPicks = [
         {label: "1500"},
         {label: "2000"},

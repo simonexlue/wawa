@@ -2,18 +2,24 @@ import { useState } from "react";
 import { 
     View, 
     Text,
-    StyleSheet 
+    StyleSheet, 
+    Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import StepOneProfileInfo from "../components/create-profile/StepOneProfileInfo";
-import StepTwoGoal from "../components/create-profile/StepTwoGoal";
-import StepThreeProfilePic from "../components/create-profile/StepThreeProfilePic";
-import StepFourContainer from "../components/create-profile/StepFourContainer";
+import StepThreeGoal from "../components/create-profile/StepThreeGoal";
+import StepFourProfilePic from "../components/create-profile/StepFourProfilePic";
+import StepFiveContainer from "../components/create-profile/StepFiveContainer";
+import StepTwoUsername from "../components/create-profile/StepTwoUsername";
 import StepProgress from "../components/create-profile/StepProgress";
+import { supabase } from "../lib/supabase";
+import { completeOnboarding } from "../services/create-profile/onboarding";
+import { router } from "expo-router";
 
 export default function CreateProfile() {
     const [step, setStep] = useState(1)
     const [displayName, setDisplayName] = useState("")
+    const [username, setUsername] = useState("")
     const [dailyGoal, setDailyGoal] = useState("2500")
     const [avatar, setAvatar] = useState<string | null>(null)
     const [containerName, setContainerName] = useState("")
@@ -27,6 +33,59 @@ export default function CreateProfile() {
         setStep((prev) => prev - 1)
     }
 
+    function validateInputs() {
+        if(!displayName) {
+            Alert.alert("Missing information", "Name is missing from submission.")
+            return
+        }
+        if (!username) {
+            Alert.alert("Missing information", "Username is missing from submission.")
+            return
+        }
+        if(!dailyGoal || Number(dailyGoal) <= 0) {
+            Alert.alert("Missing information", "Please enter a valid daily goal.")
+            return
+        }
+        if(!containerName.trim() || !containerAmount || Number(containerAmount) <= 0) {
+            Alert.alert("Missing information", "Go-to bottle information is missing from submission.")
+            return
+        }
+    }
+
+    async function handleFinishSetup() {
+        validateInputs()
+
+        try {
+            setIsSumbitting(true)
+
+            const { data, error } = await supabase.auth.getUser();
+
+            if (error || !data.user) {
+                throw new Error("User not found");
+            }
+
+            await completeOnboarding({
+                userId: data.user.id,
+                username,
+                displayName,
+                dailyGoal: Number(dailyGoal),
+                avatar,
+                containerName,
+                containerAmount: Number(containerAmount),
+            })
+
+            router.replace("/(tabs)/home")
+        } catch (error) {
+            console.log(error)
+            Alert.alert("Error", "Something went wrong while creating your profile.")
+        } finally {
+            setIsSumbitting(false)
+        }
+        
+
+
+    }
+
     function renderStep() {
         if(step === 1) {
             return (
@@ -38,42 +97,48 @@ export default function CreateProfile() {
             )
         } else if (step === 2) {
             return (
-                <StepTwoGoal 
+                <StepTwoUsername
+                    username={username}
+                    setUsername={setUsername}
+                    onNext={onNext}
+                />
+            )
+        } else if (step === 3) {
+            return (
+                <StepThreeGoal 
                     dailyGoal={dailyGoal}
                     setDailyGoal={setDailyGoal}
                     onNext={onNext}
-                    onBack={onBack}
                 />
             )  
-        } else if (step === 3) {
+        } else if (step === 4) {
             return (
-                <StepThreeProfilePic
+                <StepFourProfilePic
                     displayName={displayName}
                     avatar={avatar}
                     setAvatar={setAvatar}
                     onNext={onNext}
-                    onBack={onBack}
                 />
             )
-        } else if (step === 4) {
+        } else if (step === 5) {
             return (
-                <StepFourContainer
+                <StepFiveContainer
                     containerName={containerName}
                     setContainerName={setContainerName}
                     containerAmount={containerAmount}
                     setContainerAmount={setContainerAmount}
-                    onNext={onNext}
-                    onBack={onBack}
+                    onNext={handleFinishSetup}
+                    isSubmitting={isSubmitting}
                 />
             )
-        }
+        } 
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <StepProgress 
                 currentStep={step}
-                totalSteps={4}
+                totalSteps={5}
                 onBack={onBack}
                 showBack={step > 1}
             />
