@@ -1,10 +1,10 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Text, StyleSheet } from "react-native";
 
-export default function Home() {
+export default function Leaderboard() {
     return (
         <SafeAreaView style={styles.container}>
-            <Text>Home</Text>
+            <Text>Leaderboard</Text>
         </SafeAreaView>
     )
 }

@@ -24,7 +24,7 @@ export default function TabsLayout() {
         options={{
           title: "Feed",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="people" size={size} color={color} />
+            <Ionicons name="newspaper" size={size} color={color} />
           ),
         }}
       />
@@ -40,11 +40,21 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
-        name="profile"
+        name="friends"
         options={{
-          title: "Profile",
+          title: "Friends",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="person" size={size} color={color} />
+            <Ionicons name="people" size={size} color={color} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="bag"
+        options={{
+          title: "Bag",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bag" size={size} color={color} />
           ),
         }}
       />
