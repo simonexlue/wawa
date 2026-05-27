@@ -1,32 +1,61 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity, Alert } from "react-native";
 import { Fonts } from "../../constants/fonts";
 import ContainerCard from "../../components/bag/ContainerCard";
-
-const dummyContainers = [
-    {name: "Hydro Flask", volume: 950},
-    {name: "Owala", volume: 7100},
-    {name: "My cute blue mug", volume: 350},
-]
+import { WaterContainer } from "../../types/bag/bag";
+import { useEffect, useState } from "react";
+import { getWaterContainers } from "../../services/bag/bag";
+import { supabase } from "../../lib/supabase";
 
 export default function Bag() {
+    const [containers, setContainers] = useState<WaterContainer[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState("")
 
     const title = "My Bag"
     const subtitle = "The cups and bottles you drink from most."
 
+    useEffect(() => {
+        async function loadWaterContainers() {
+            try {
+                const {data: {user}} = await supabase.auth.getUser();
+
+                if(!user) {
+                    throw new Error("No user found")
+                }
+
+                const data = await getWaterContainers(user.id)
+                setContainers(data)
+            } catch (error) {
+                console.log(error)
+                setError("Something went wrong while fetching your bottles.")
+                Alert.alert("Error", "Something went wrong while fetching your bottles.")
+            } finally {
+                setLoading(false)
+            }
+        } 
+
+        loadWaterContainers();
+        
+    }, [])
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>{title}</Text>
             <Text style={styles.subtitle}>{subtitle}</Text>
 
-            <View style={styles.containerList}>
-                {dummyContainers.map((container) => (
-                    <ContainerCard 
-                        containerName={container.name}
-                        containerVolume={container.volume}
-                    />
-                ) )}
-            </View>
+            {!loading && !error.trim() && containers && (
+                <View style={styles.containerList}>
+                    {containers.map((container) => (
+                        <ContainerCard 
+                            key={container.id}
+                            containerName={container.name}
+                            containerVolume={container.amount_ml}
+                        />
+                    ))}
+                </View>
+            )}
+
+
 
             <TouchableOpacity style={styles.button}>
                 <Text style={styles.buttonText}>+ Add a bottle</Text>
