@@ -6,11 +6,13 @@ import { WaterContainer } from "../../types/bag/bag";
 import { useEffect, useState } from "react";
 import { getWaterContainers } from "../../services/bag/bag";
 import { supabase } from "../../lib/supabase";
+import { router } from "expo-router";
 
 export default function Bag() {
     const [containers, setContainers] = useState<WaterContainer[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState("")
+    const [userId, setUserId] = useState("")
 
     const title = "My Bag"
     const subtitle = "The cups and bottles you drink from most."
@@ -23,6 +25,7 @@ export default function Bag() {
                 if(!user) {
                     throw new Error("No user found")
                 }
+                setUserId(user.id)
 
                 const data = await getWaterContainers(user.id)
                 setContainers(data)
@@ -38,6 +41,13 @@ export default function Bag() {
         loadWaterContainers();
         
     }, [])
+
+    function handleDeleteSuccess(containerKey: string) {
+        setContainers((prevContainers) => prevContainers.filter(
+            (container) => container.id !== containerKey
+        ))
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <Text style={styles.title}>{title}</Text>
@@ -48,16 +58,20 @@ export default function Bag() {
                     {containers.map((container) => (
                         <ContainerCard 
                             key={container.id}
+                            userId={userId}
+                            containerKey={container.id}
                             containerName={container.name}
                             containerVolume={container.amount_ml}
+                            onDeleteSuccess={handleDeleteSuccess}
                         />
                     ))}
                 </View>
             )}
 
-
-
-            <TouchableOpacity style={styles.button}>
+            <TouchableOpacity 
+                style={styles.button}
+                onPress={() => router.push("/bag/add-container")}
+                >
                 <Text style={styles.buttonText}>+ Add a bottle</Text>
             </TouchableOpacity>
             

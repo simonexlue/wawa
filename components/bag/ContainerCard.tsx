@@ -1,16 +1,43 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from "react-native";
 import { Fonts } from "../../constants/fonts";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { useState } from "react";
+import { deleteWaterContainer } from "../../services/bag/bag";
 
 type ContainerCardProps = {
+    userId: string;
+    containerKey: string;
     containerName: string;
     containerVolume: number;
+    onDeleteSuccess: (containerKey: string) => void;
 }
 
 export default function ContainerCard({
+    userId,
+    containerKey,
     containerName, 
     containerVolume,
+    onDeleteSuccess,
 }: ContainerCardProps) {
+    const [isDeleting, setIsDeleting] = useState(false)
+    const [deleteError, setDeleteError] = useState("")
+
+    async function handleDelete(containerKey: string) {
+        try {
+            setIsDeleting(true)
+            setDeleteError("")
+
+            await deleteWaterContainer(userId, containerKey)
+            onDeleteSuccess(containerKey)
+
+        } catch (error) {
+            console.log(error)
+            setDeleteError("Could not delete container")
+            Alert.alert("Error", "Could not delete container.")
+        } finally {
+            setIsDeleting(false)
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -25,8 +52,12 @@ export default function ContainerCard({
                     <Ionicons name="pencil-outline" size={20} color="deepskyblue" />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.actionButton}>
-                    <Ionicons name="trash-outline" size={20} color="red" />
+                <TouchableOpacity 
+                    style={styles.actionButton}
+                    onPress={() => handleDelete(containerKey)}
+                    disabled={isDeleting}
+                    >
+                        {isDeleting ? <ActivityIndicator /> : <Ionicons name="trash-outline" size={20} color="red" />}
                 </TouchableOpacity>
             </View>
         </View>

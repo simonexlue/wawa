@@ -42,7 +42,7 @@ export async function createWaterContainer({
     name,
     amount_ml,
     imageUri,
-}: CreateWaterContainerPayload): Promise<WaterContainer> {
+}: CreateWaterContainerPayload) {
     let photo_url: string | null = null;
 
     if(imageUri) {
@@ -55,16 +55,12 @@ export async function createWaterContainer({
             user_id: userId,
             name: name.trim(),
             amount_ml: Number(amount_ml),
-            imageUri: photo_url,
+            photo_url,
         })
-        .select("*")
-        .single()
 
     if(error) {
         throw error
     }
-
-    return data
 }
 
 export async function deleteWaterContainer(userId: string, containerId: string) {
