@@ -3,6 +3,7 @@ import { Fonts } from "../../constants/fonts";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from "react";
 import { deleteWaterContainer } from "../../services/bag/bag";
+import { router } from "expo-router";
 
 type ContainerCardProps = {
     userId: string;
@@ -48,7 +49,18 @@ export default function ContainerCard({
 
 
             <View style={styles.buttonGroup}>
-                <TouchableOpacity style={styles.actionButton}>
+                <TouchableOpacity 
+                    style={styles.actionButton}
+                    onPress={() => router.push({
+                        pathname: "/bag/add-container",
+                        params: {
+                            mode: "edit",
+                            id: containerKey,
+                            name: containerName,
+                            amount: String(containerVolume),
+                        }
+                    })}
+                    >
                     <Ionicons name="pencil-outline" size={20} color="deepskyblue" />
                 </TouchableOpacity>
 

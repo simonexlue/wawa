@@ -13,3 +13,11 @@ export type CreateWaterContainerPayload = {
     amount_ml: number;
     imageUri?: string | null;
 };
+
+export type UpdateWaterContainerPayload = {
+    containerId: string;
+    userId: string;
+    name: string;
+    amount_ml: number;
+    imageUri?: string | null;
+}

@@ -10,19 +10,28 @@ import { Fonts } from "../../constants/fonts";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
-import { createWaterContainer } from "../../services/bag/bag";
+import { router, useLocalSearchParams } from "expo-router";
+import { createWaterContainer, editWaterContainer } from "../../services/bag/bag";
 import { supabase } from "../../lib/supabase";
 
 export default function AddContainer() {
-    const [containerName, setContainerName] = useState("")
-    const [containerAmount, setContainerAmount] = useState("")
+    const { mode, id, name, amount } = useLocalSearchParams<{
+        mode?: string,
+        id?: string,
+        name?: string,
+        amount?: string,
+    }>();
+    const isEditMode = mode === "edit";
+
+    const [containerName, setContainerName] = useState(name ?? "")
+    const [containerAmount, setContainerAmount] = useState(amount ?? "")
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState("")
 
-    const title = "Add a bottle"
-    const subtitle = "Save the bottles or mugs you drink from most. You can log water with one tap later."
-
+    const title = isEditMode ? "Edit container" : "Add a container";
+    const subtitle = isEditMode 
+        ? `Update the details of your ${name}`
+        : "Save the bottles or mugs you drink from most. You can log water with one tap later."
     const quickPicks = [
         {label: "500"},
         {label: "750"},
@@ -40,16 +49,28 @@ export default function AddContainer() {
                 throw new Error("No user found")
             }
 
-            await createWaterContainer({
-                userId: user.id,
-                name: containerName.trim(),
-                amount_ml: Number(containerAmount)
-            })
+            if(isEditMode) {
+                if(!id) {
+                    throw new Error("No container id found")
+                }
 
+                await editWaterContainer({
+                    userId: user.id,
+                    containerId: id,
+                    name: containerName.trim(),
+                    amount_ml: Number(containerAmount),
+                })
+            } else {
+                await createWaterContainer({
+                    userId: user.id,
+                    name: containerName.trim(),
+                    amount_ml: Number(containerAmount)
+                })
+            }
             router.replace("/(tabs)/bag")
 
         } catch (error) {
-            setError("Problem encountered while adding container.")
+            setError("Problem encountered while saving container.")
             Alert.alert("Error", "Something went wrong")
         } finally {
             setIsSubmitting(false)
@@ -107,7 +128,13 @@ export default function AddContainer() {
                 onPress={handleFinish}
                 >
                 <Text style={styles.buttonText}>
-                    {isSubmitting ? "Adding container..." : "Add Container"}
+                        {isSubmitting
+                            ? isEditMode
+                                ? "Saving..."
+                                : "Adding container..."
+                            : isEditMode
+                                ? `Save ${containerName}`
+                                : "Add Container"}
                 </Text>
             </TouchableOpacity>
         </SafeAreaView>

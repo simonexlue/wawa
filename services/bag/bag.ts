@@ -1,5 +1,5 @@
 import { supabase } from "../../lib/supabase";
-import { CreateWaterContainerPayload, WaterContainer } from "../../types/bag/bag";
+import { CreateWaterContainerPayload, UpdateWaterContainerPayload, WaterContainer } from "../../types/bag/bag";
 import { compressImage } from "../../utils/compressImage";
 
 async function uploadContainerPhoto(userId: string, imageUri: string) {
@@ -60,6 +60,56 @@ export async function createWaterContainer({
 
     if(error) {
         throw error
+    }
+}
+
+export async function editWaterContainer({
+    userId,
+    containerId,
+    name,
+    amount_ml,
+    imageUri,
+}: UpdateWaterContainerPayload) {
+
+    const updateData: {
+        name: string;
+        amount_ml: number;
+        photo_url?: string | null;
+    } = {
+        name: name.trim(),
+        amount_ml: Number(amount_ml),
+    };
+
+    let oldPhotoUrl: string | null = null;
+
+    if (imageUri) {
+        const { data: existingContainer, error: fetchError } = await supabase
+            .from("water_containers")
+            .select("photo_url")
+            .eq("id", containerId)
+            .eq("user_id", userId)
+            .single()
+
+        if(fetchError) throw fetchError
+
+        oldPhotoUrl = existingContainer.photo_url
+        updateData.photo_url = await uploadContainerPhoto(userId, imageUri)
+    }
+    
+    const { error: updateError } = await supabase
+        .from("water_containers")
+        .update(updateData)
+        .eq("id", containerId)
+        .eq("user_id", userId);
+
+    if (updateError) throw updateError;
+
+    if (oldPhotoUrl && updateData.photo_url) {
+        const { error: storageError } = await supabase.storage
+            .from("container-photos")
+            .remove([oldPhotoUrl]);
+
+        if (storageError) throw storageError;
     }
 }
 
